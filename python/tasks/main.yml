@@ -1,0 +1,21 @@
+- name: Install packages
+  become: true
+  block:
+    - name: Install from stable
+      package:
+        name: "{{ packages }}"
+        state: latest
+      when: packages is defined
+
+- name: Create symlinks
+  become: false
+  block:
+    - name: Create ~/.local/bin dir
+      ansible.builtin.file:
+        path: ~/.local/bin
+        state: directory
+    - name: Create symlink to Python3
+      ansible.builtin.file:
+        src: /usr/bin/ipython3
+        dest: ~/.local/bin/ipython
+        state: link
