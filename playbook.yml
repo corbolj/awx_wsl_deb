@@ -2,9 +2,10 @@
   roles:
     - python
     - apt
-
+    - github
     - golang
     - terraform
     - packer
     - vagrant
+    - docker
     - zsh

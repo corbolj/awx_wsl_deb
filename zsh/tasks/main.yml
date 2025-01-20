@@ -1,3 +1,5 @@
+# Install ZSH
+
 - name: Check to see if Zsh is installed
   stat:
     path: /usr/bin/packer
@@ -17,7 +19,9 @@
   register: omz_bin
 
 
-- name: Download zsh installer
+#Install OMZ
+
+- name: Download OMZ installer
   get_url: 
     url: https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh 
     dest: /tmp/zsh-installer.sh

@@ -1,0 +1,12 @@
+- name: Check that the Github CLI is installed
+  stat:
+    path: /usr/bin/gh
+  register: gh_bin
+
+- name: Install GitHub CLI
+  become:
+    yes
+  apt:
+    name: gh
+    state: present
+  when: not gh_bin.stat.exists
