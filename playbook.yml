@@ -1,9 +1,9 @@
 - hosts: localhost
   roles:
     - apt
-    - python
     - github
     - golang
+    - python
     - terraform
     - packer
     - vagrant
