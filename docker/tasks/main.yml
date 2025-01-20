@@ -20,7 +20,7 @@
 - name: Setup keyrings
   become: true
   ansible.builtin.shell:
-    cmd:  install -m 0755 -d /etc/apt/keyrings
+    cmd:  install -m 0755 -d /usr/share/keyrings
 
 # - name: Check that the docker.asc exists
 #   become: true
@@ -28,17 +28,28 @@
 #     path: /etc/apt/trusted.gpg.d/docker.asc
 #   register: docker_keyring
 
+# - name: Add Docker's official GPG key
+#   become: true
+#   ansible.builtin.apt_key:
+#     url: https://download.docker.com/linux/debian/gpg
+#     keyring: /etc/apt/trusted.gpg.d/docker.asc
+#     state: present
+
 - name: Add Docker's official GPG key
   become: true
-  ansible.builtin.apt_key:
+  ansible.builtin.get_url:
+    checksum: "sha256:1500c1f56fa9e26b9b8f42452a553675796ade0807cdce11975eb98170b3a570"
     url: https://download.docker.com/linux/debian/gpg
-    keyring: /etc/apt/trusted.gpg.d/docker.asc
-    state: present
+    dest: /usr/share/keyrings/docker.asc
+    mode: '0644'
+    force: true
 
-- name: Setup keyrings
-  become: true
-  ansible.builtin.shell:
-    cmd:  install -m 0755 -d /etc/apt/keyrings
+
+
+# - name: Setup keyrings
+#   become: true
+#   ansible.builtin.shell:
+#     cmd:  install -m 0755 -d /etc/apt/keyrings
   
 - name: Print architecture variables
   ansible.builtin.debug:
@@ -49,7 +60,7 @@
   ansible.builtin.apt_repository:
     repo: >-
       deb [arch={{ arch_mapping[ansible_architecture] | default(ansible_architecture) }}
-      signed-by=/etc/apt/trusted.gpg.d/docker.asc]
+      signed-by=/usr/share/keyrings/docker.asc]
       https://download.docker.com/linux/debian {{ ansible_lsb.codename }} stable
     filename: docker
     state: present
