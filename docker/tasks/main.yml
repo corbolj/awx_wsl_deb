@@ -1,15 +1,6 @@
 
 # Remove Docker Packages
 
-# - name: Remove packages
-#   become: true
-#   block:
-#     - name: Remove Docker Packages
-#       package:
-#         name: "{{ remove_packages }}"
-#         state: absent
-#       when: packages is defined
-
 - name: Remove packages
   become: true
   ansible.builtin.apt:
@@ -25,6 +16,11 @@
 
 
 # Install Install Docker Repos
+
+- name: Setup keyrings
+  become: true
+  ansible.builtin.shell:
+    cmd:  install -m 0755 -d /etc/apt/keyrings
 
 - name: Check that the docker.asc exists
   become: true

@@ -39,10 +39,5 @@ packages:
   - unzip
   - jq
   - yq
-  
-  # Python
-  - python3-pip
-  - python-is-python3
-  - ipython3
-
-
+  - ca-certificates
+  - man
