@@ -1,40 +1,35 @@
+- name: Check to see if Zsh is installed
+  stat:
+    path: /usr/bin/packer
+  register: zsh_bin
+
 - name: Install zsh
   become: true
   package:
     name:
       - zsh
     state: present
+  when: not zsh_bin.stat.exists
+
+- name: Check to see if OMZ is installed
+  stat:
+    path: /home/{{ lookup('env', 'USER') }}/.oh-my-zsh/oh-my-zsh.sh
+  register: omz_bin
+
 
 - name: Download zsh installer
   get_url: 
     url: https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh 
     dest: /tmp/zsh-installer.sh
     mode: 0755
+  when: not omz_bin.stat.exists
     
 - name: Execute the zsh-installer.sh
   shell: /tmp/zsh-installer.sh
+  when: not omz_bin.stat.exists
 
 - name: Remove the zsh-installer.sh
   file: 
     path: /tmp/zsh-installer.sh 
     state: absent
-
-
-# - name: Clone dotfiles
-#   ansible.builtin.git:
-#     repo: 'https://github.com/santisoler/dotfiles'
-#     dest: '~/.dotfiles'
-#     clone: yes
-#     update: yes
-
-# - name: Stow zsh configs
-#   ansible.builtin.shell: |
-#     cd ~/.dotfiles
-#     stow zsh
-
-# - name: Change shell to zsh
-#   become: yes
-#   ansible.builtin.user:
-#     name: "{{ ansible_env.USER }}"
-#     shell: /usr/bin/zsh
-
+  when: not omz_bin.stat.exists

@@ -2,9 +2,9 @@
   roles:
     - python
     - apt
-    # - zsh
+
     - golang
     - terraform
     - packer
     - vagrant
-
+    - zsh
