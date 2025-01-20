@@ -8,6 +8,11 @@
     mode: '0644'
     backup: true
 
+- name: Install python3-apt # Needed for all other apt installs
+  become: true
+  ansible.builtin.shell:
+    cmd:  apt install -y python3-apt
+
 - name: Update packages
   become: true
   package:
@@ -19,9 +24,6 @@
     upgrade: yes
   when: upgrade is not defined or upgrade
 
-- name: Install python3-apt # Needed for all other apt installs
-  ansible.builtin.shell:
-    cmd:  apt install python3-apt
 
 
 - name: Install packages
