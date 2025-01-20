@@ -1,0 +1,56 @@
+# Install Hashicorp repositories to apt
+
+- name: Check that the hashicorp-archive-keyring.gpg exists
+  stat:
+    path: /usr/share/keyrings/hashicorp-archive-keyring.gpg
+  register: hashicorp_archive_keyring
+
+- name: Install the Hashicorp package repository signing key
+  become:
+    yes
+  ansible.builtin.apt_key:
+    url: https://apt.releases.hashicorp.com/gpg
+    keyring: /usr/share/keyrings/hashicorp-archive-keyring.gpg
+  when: not hashicorp_archive_keyring.stat.exists
+
+- name: Check that the hashicorp.list exists
+  stat:
+    path: /etc/apt/sources.list.d/hashicorp.list
+  register: hashicorp_list
+  when: not hashicorp_archive_keyring.stat.exists
+
+- name: Add HashiCorp repository
+  become:
+    yes
+  ansible.builtin.apt_repository:
+    filename: hashicorp.list
+    repo: "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com bookworm main\n"
+    update_cache: yes
+  when: not hashicorp_archive_keyring.stat.exists
+
+# Install Packer
+
+- name: Check to see if Packer is installed
+  stat:
+    path: /usr/bin/packer
+  register: packer_bin
+
+- name: Update apt package index (HashiCorp repository)
+  become:
+    yes
+  apt:
+    update_cache: yes
+  when: not packer_bin.stat.exists
+
+- name: Install Packer
+  become:
+    yes
+  apt:
+    name: packer
+    state: present
+  when: not packer_bin.stat.exists
+
+- name: Verify Packer installation
+  command: packer version
+  register: packer_version_output
+  when: not packer_bin.stat.exists

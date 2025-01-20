@@ -1,0 +1,7 @@
+# See https://wiki.debian.org/SourcesList for more information.
+{% for repo in repositories %}
+{% for deb_type in ("deb", "deb-src") %}
+{{ deb_type }} {{ repo.url }} {{ repo.distribution }} {{ repo.components | join(" ") }}
+{% endfor %}
+
+{% endfor %}

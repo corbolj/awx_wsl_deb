@@ -1,0 +1,49 @@
+# ----------------------------------------------------------------
+# Variables for configuring apt, upgrading and installing packages
+# ----------------------------------------------------------------
+
+upgrade: true
+
+repositories:
+  - url: http://deb.debian.org/debian
+    distribution: bookworm
+    components:
+      - main
+      - contrib
+      - non-free-firmware
+  - url: http://deb.debian.org/debian
+    distribution: bookworm-updates
+    components:
+      - main
+      - contrib
+      - non-free-firmware
+  - url: http://deb.debian.org/debian
+    distribution: bookworm-backports
+    components:
+      - main
+      - contrib
+      - non-free-firmware
+  - url: http://security.debian.org/debian-security/
+    distribution: bookworm-security
+    components:
+      - main
+      - contrib
+      - non-free-firmware
+
+packages:
+  # Shell tools
+  - git
+  - tmux
+  - zsh
+  - htop
+  - curl
+  - wget
+  - unzip
+  - gh # github cli
+  # Python
+  - python3-pip
+  - python-is-python3
+  - ipython3
+  - software-properties-common
+  - gnupg
+

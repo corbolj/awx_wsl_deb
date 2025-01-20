@@ -1,0 +1,22 @@
+- name: Check that the Golang is installed
+  stat:
+    path: /home/{{ lookup('env', 'USER') }}/.local/opt/go/bin/go
+  register: golang_bin
+
+- name: Download golang installer
+  get_url: 
+    url: https://webi.sh/golang 
+    dest: /tmp/golang-installer.sh
+    mode: 0755
+  when: not golang_bin.stat.exists
+    
+- name: Execute the golang-installer.sh
+  shell: /tmp/golang-installer.sh
+  when: not golang_bin.stat.exists
+
+- name: Remove the golang-installer.sh
+  file: 
+    path: /tmp/golang-installer.sh 
+    state: absent
+  when: not golang_bin.stat.exists
+

@@ -1,0 +1,40 @@
+- name: Install zsh
+  become: true
+  package:
+    name:
+      - zsh
+    state: present
+
+- name: Download zsh installer
+  get_url: 
+    url: https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh 
+    dest: /tmp/zsh-installer.sh
+    mode: 0755
+    
+- name: Execute the zsh-installer.sh
+  shell: /tmp/zsh-installer.sh
+
+- name: Remove the zsh-installer.sh
+  file: 
+    path: /tmp/zsh-installer.sh 
+    state: absent
+
+
+# - name: Clone dotfiles
+#   ansible.builtin.git:
+#     repo: 'https://github.com/santisoler/dotfiles'
+#     dest: '~/.dotfiles'
+#     clone: yes
+#     update: yes
+
+# - name: Stow zsh configs
+#   ansible.builtin.shell: |
+#     cd ~/.dotfiles
+#     stow zsh
+
+# - name: Change shell to zsh
+#   become: yes
+#   ansible.builtin.user:
+#     name: "{{ ansible_env.USER }}"
+#     shell: /usr/bin/zsh
+
