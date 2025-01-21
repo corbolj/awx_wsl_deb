@@ -1,20 +1,3 @@
-
-# Remove Docker Packages
-
-# - name: Remove packages
-#   become: true
-#   ansible.builtin.apt:
-#     name: "{{ item }}"
-#     state: absent
-#     update_cache: true
-#   loop:
-#     - docker.io 
-#     - docker-doc 
-#     - docker-compose 
-#     - podman-docker 
-#     - containerd runc
-
-
 # Install Install Docker Repos
 
 - name: Setup keyrings
