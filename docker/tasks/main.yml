@@ -90,3 +90,8 @@
   become: true
   ansible.builtin.shell:
     cmd: "gpasswd -a {{ lookup('env', 'USER') }} docker"
+
+- name: Adjusting permissions of docker sock
+  ansible.builtin.file:
+    path: /var/run/docker.sock
+    mode: '666 '
