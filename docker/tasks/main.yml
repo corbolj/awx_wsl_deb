@@ -1,18 +1,18 @@
 
 # Remove Docker Packages
 
-- name: Remove packages
-  become: true
-  ansible.builtin.apt:
-    name: "{{ item }}"
-    state: absent
-    update_cache: true
-  loop:
-    - docker.io 
-    - docker-doc 
-    - docker-compose 
-    - podman-docker 
-    - containerd runc
+# - name: Remove packages
+#   become: true
+#   ansible.builtin.apt:
+#     name: "{{ item }}"
+#     state: absent
+#     update_cache: true
+#   loop:
+#     - docker.io 
+#     - docker-doc 
+#     - docker-compose 
+#     - podman-docker 
+#     - containerd runc
 
 
 # Install Install Docker Repos
@@ -22,18 +22,11 @@
   ansible.builtin.shell:
     cmd:  install -m 0755 -d /usr/share/keyrings
 
-# - name: Check that the docker.asc exists
-#   become: true
-#   stat:
-#     path: /etc/apt/trusted.gpg.d/docker.asc
-#   register: docker_keyring
-
-# - name: Add Docker's official GPG key
-#   become: true
-#   ansible.builtin.apt_key:
-#     url: https://download.docker.com/linux/debian/gpg
-#     keyring: /etc/apt/trusted.gpg.d/docker.asc
-#     state: present
+- name: Check that the docker.asc exists
+  become: true
+  stat:
+    path: /usr/share/keyrings/docker.asc
+  register: docker_keyring
 
 - name: Add Docker's official GPG key
   become: true
@@ -43,17 +36,7 @@
     dest: /usr/share/keyrings/docker.asc
     mode: '0644'
     force: true
-
-
-
-# - name: Setup keyrings
-#   become: true
-#   ansible.builtin.shell:
-#     cmd:  install -m 0755 -d /etc/apt/keyrings
-  
-- name: Print architecture variables
-  ansible.builtin.debug:
-    msg: "Architecture: amd64, Codename: {{ ansible_lsb.codename }}"
+  when: not docker_keyring.stat.exists
 
 - name: Add Docker repository
   become: true
@@ -63,15 +46,13 @@
       https://download.docker.com/linux/debian {{ ansible_lsb.codename }} stable
     filename: docker
     state: present
-
-
+  when: not docker_keyring.stat.exists
 
 - name: Update apt package index (Docker repository)
   become: yes
   apt:
     update_cache: yes
- #when: not terraform_bin.stat.exists
-
+  when: not docker_keyring.stat.exists
 
 - name: Install Docker and related packages
   become: true
@@ -95,16 +76,17 @@
 - name: Add user to Docker group
   become: true
   ansible.builtin.user:
-    name: "{{ ansible_user }}"
+    name: "{{ lookup('env', 'USER') }}"
     groups: docker
     append: true
 
-- name: Enable and start Docker services
-  become: true
-  ansible.builtin.systemd:
-    name: "{{ item }}"
-    enabled: true
+- name: Ensure docker deamon is running
+  ansible.builtin.sysvinit:
+    name: docker
     state: started
-  loop:
-    - docker.service
-    - containerd.service
+  become: true
+
+- name: All user to use docker without sudo
+  become: true
+  ansible.builtin.shell:
+    cmd: "gpasswd -a {{ lookup('env', 'USER') }} docker"
