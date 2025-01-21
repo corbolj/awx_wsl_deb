@@ -8,4 +8,4 @@
     - packer
     - vagrant
     - docker
-    - zsh
+   # - zsh
