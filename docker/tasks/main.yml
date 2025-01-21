@@ -96,3 +96,10 @@
   ansible.builtin.file:
     path: /var/run/docker.sock
     mode: '666 '
+
+- name: Fixing WSL issue
+  become: true
+  ansible.builtin.shell:
+    cmd: "update-alternatives --set iptables /usr/sbin/iptables-legacy"
+
+    
