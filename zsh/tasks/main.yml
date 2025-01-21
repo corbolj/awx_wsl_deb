@@ -2,7 +2,7 @@
 
 - name: Check to see if Zsh is installed
   stat:
-    path: /usr/bin/packer
+    path: /usr/bin/zsh
   register: zsh_bin
 
 - name: Install zsh
@@ -19,7 +19,7 @@
   register: omz_bin
 
 
-#Install OMZ
+# Install OMZ
 
 - name: Download OMZ installer
   get_url: 
@@ -37,3 +37,11 @@
     path: /tmp/zsh-installer.sh 
     state: absent
   when: not omz_bin.stat.exists
+
+- name: Set ZSH as default
+  become: true
+  ansible.builtin.shell:
+    cmd: chsh -s $(which zsh)
+
+
+  
