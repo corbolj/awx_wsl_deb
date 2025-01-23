@@ -1,0 +1,52 @@
+# Install Hashicorp repositories to apt
+
+- name: Check that the hashicorp-archive-keyring.gpg exists
+  stat:
+    path: /usr/share/keyrings/hashicorp-archive-keyring.gpg
+  register: hashicorp_archive_keyring
+
+- name: Install the Hashicorp package repository signing key
+  become: yes
+  ansible.builtin.apt_key:
+    url: https://apt.releases.hashicorp.com/gpg
+    keyring: /usr/share/keyrings/hashicorp-archive-keyring.gpg
+  when: not hashicorp_archive_keyring.stat.exists
+
+- name: Check that the hashicorp.list exists
+  stat:
+    path: /etc/apt/sources.list.d/hashicorp.list
+  register: hashicorp_list
+cd .
+
+- name: Add HashiCorp repository
+  become: yes
+  ansible.builtin.apt_repository:
+    filename: hashicorp.list
+    repo: "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com bookworm main\n"
+    update_cache: yes
+  when: not hashicorp_archive_keyring.stat.exists
+
+# Install Vault
+
+- name: Check to see if vault is installed
+  stat:
+    path: /usr/bin/vault
+  register: vault_bin
+
+- name: Update apt package index (HashiCorp repository)
+  become: yes
+  apt:
+    update_cache: yes
+  when: not vault_bin.stat.exists
+
+- name: Install vault
+  become: yes
+  apt:
+    name: vault
+    state: present
+  when: not vault_bin.stat.exists
+
+- name: Verify vault installation
+  command: vault version
+  register: vault_version_output
+  when: not vault_bin.stat.exists
