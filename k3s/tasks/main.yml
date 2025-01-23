@@ -1,0 +1,22 @@
+- name: Check that the Golang is installed
+  stat:
+    path: /usr/local/bin/k3s
+  register: k3s_bin
+
+- name: Download golang installer
+  get_url: 
+    url: https://get.k3s.io 
+    dest: /tmp/k3s-installer.sh
+    mode: 0755
+  when: not k3s_bin.stat.exists
+    
+- name: Execute the golang-installer.sh
+  shell: /tmp/k3s-installer.sh
+  when: not golang_bin.stat.exists
+
+- name: Remove the k3s-installer.sh
+  file: 
+    path: /tmp/k3s-installer.sh 
+    state: absent
+  when: not golang_bin.stat.exists
+

@@ -8,4 +8,5 @@
     - packer
     - vagrant
     - docker
+    - k3s
     - zsh
