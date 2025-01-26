@@ -1,0 +1,21 @@
+- name: Check that the Golang is installed
+  stat:
+    path: /usr/local/bin/helm
+  register: helm_bin
+
+- name: Download helm installer
+  get_url: 
+    url: https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 
+    dest: /tmp/get_helm.sh
+    mode: 0755
+  when: not helm_bin.stat.exists
+    
+- name: Execute the get_helm.sh.sh
+  shell: /tmp/get_helm.sh
+  when: not helm_bin.stat.exists
+
+- name: Remove the get_helm.sh
+  file: 
+    path: /tmp/get_helm.sh 
+    state: absent
+  when: not helm_bin.stat.exists
